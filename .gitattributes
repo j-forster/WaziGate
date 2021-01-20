@@ -1,0 +1,8 @@
+# Set the default behavior
+* text=auto eol=lf
+
+*.awk text eol=lf
+*.sh text eol=lf
+*.sh text eol=lf
+*.conf text eol=lf
+*.gitattributes text eol=lf
