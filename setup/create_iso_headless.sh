@@ -49,7 +49,7 @@ if ! grep -qFx 'DAEMON_CONF="/etc/hostapd/hostapd.conf"' /etc/default/hostapd; t
   sudo sed -i -e '$i \DAEMON_CONF="/etc/hostapd/hostapd.conf"\n' /etc/default/hostapd
 fi
 
-cp --backup=numbered /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf.orig
+sudo cp --backup=numbered /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf.orig
 
 sudo systemctl start hostapd
 sudo systemctl start dnsmasq
@@ -71,27 +71,27 @@ fi
 # See http://www.runeaudio.com/forum/how-to-enable-i2c-t1287.html
 echo "Configuring the system ..."
 if ! grep -qFx "dtparam=i2c_arm=on" /boot/config.txt; then
-  echo -e '\ndtparam=i2c_arm=on' | sudo tee -a /boot/config.txt
+  echo -e '\ndtparam=i2c_arm=on' | sudo tee -a /boot/config.txt >/dev/null
 fi
 
 # Setup the default state for GPIO 6 and 26 which are used for push buttons: WiFi/AP and PWR
 if ! grep -qFx "gpio=6,26=ip,pd" /boot/config.txt; then
-  echo -e '\n\ngpio=6,26=ip,pd' | sudo tee -a /boot/config.txt
+  echo -e '\n\ngpio=6,26=ip,pd' | sudo tee -a /boot/config.txt >/dev/null
 fi
 
 if ! grep -qF "bcm2708.vc_i2c_override=1" /boot/cmdline.txt; then
   sudo bash -c "echo -n ' bcm2708.vc_i2c_override=1' >> /boot/cmdline.txt"
 fi
 if ! grep -qFx "i2c-bcm2708" /etc/modules-load.d/raspberrypi.conf; then
-  echo -e '\ni2c-bcm2708' | sudo tee -a /etc/modules-load.d/raspberrypi.conf
+  echo -e '\ni2c-bcm2708' | sudo tee -a /etc/modules-load.d/raspberrypi.conf >/dev/null
 fi
 if ! grep -qFx "i2c-dev" /etc/modules-load.d/raspberrypi.conf; then
-  echo -e '\ni2c-dev' | sudo tee -a /etc/modules-load.d/raspberrypi.conf
+  echo -e '\ni2c-dev' | sudo tee -a /etc/modules-load.d/raspberrypi.conf >/dev/null
 fi
 
 # Enable SPI (e.g. used by LoRa modules)
 if ! grep -qFx "dtparam=spi=on" /boot/config.txt; then
-  echo -e '\ndtparam=spi=on' | sudo tee -a /boot/config.txt
+  echo -e '\ndtparam=spi=on' | sudo tee -a /boot/config.txt >/dev/null
 fi
 
 ################################################################################
@@ -114,21 +114,13 @@ sudo docker-compose up --no-start
 
 ################################################################################
 
-echo -e "\n192.168.200.1\twazigate\n" | sudo tee -a /etc/hosts
-echo -e 'wazigate' | sudo tee /etc/hostname
+echo -e "\n192.168.200.1\twazigate\n" | sudo tee -a /etc/hosts >/dev/null
+echo -e 'wazigate' | sudo tee /etc/hostname >/dev/null
 echo -e "loragateway\nloragateway" | sudo passwd $USER
 
-echo -e '\nstatic domain_name_servers=8.8.8.8' | sudo tee -a /etc/dhcpcd.conf
+echo -e '\nstatic domain_name_servers=8.8.8.8' | sudo tee -a /etc/dhcpcd.conf >/dev/null
 
 ################################################################################
 
 
-echo "Done"
-
-for i in {10..01}; do
-	echo -ne "Rebooting in $i seconds... \033[0K\r"
-	sleep 1
-done
-sudo reboot
-
-exit 0
+echo "# All done :)"
